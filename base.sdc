@@ -1,15 +1,14 @@
 current_design top
-set name "clk_i"
-set clock_port [get_port $name]
-create_clock -name $name -period 100.00 $clock_port
-set clock [get_clock $name]
-set inputs [all_inputs]
-set clk_ix [lsearch [all_inputs] $clock_port]
-set all_inputs_no_clk [lreplace [all_inputs] $clk_ix $clk_ix ""]
-set outputs [all_outputs]
-set_input_delay 2.0 -clock $clock $all_inputs_no_clk
-set_output_delay 2.0 -clock $clock [all_outputs]
+set ::env(IO_SYNC) 0
+set clock_port clk_i
+set clock_period 100
+create_clock -name $clock_port -period $::env(CLOCK_PERIOD) [get_ports $clock_port]
+set clk_input [get_port $clock_port]
+set clk_indx [lsearch [all_inputs] $clk_input]
+set all_inputs_wo_clk [lreplace [all_inputs] $clk_indx $clk_indx ""]
+set_input_delay 2 -clock $clock_port $all_inputs_wo_clk
+set_output_delay 2 -clock $clock_port [all_outputs]
+set_driving_cell -lib_cell sky130_fd_sc_hd__dfxtp_1 -pin {Q} $all_inputs_wo_clk
+set_clock_uncertainty 0.1 [get_clocks $clock_port]
+set_input_transition 0.05 $all_inputs_wo_clk
 set_load 0.006 [all_outputs]
-set_input_transition 0.05 $all_inputs_no_clk
-set_driving_cell -lib_cell sky130_fd_sc_hd__dfxtp_1 -pin Q $all_inputs_no_clk
-set_driving_cell -lib_cell sky130_fd_sc_hd__clkbuf_2 -pin X $clock_port
