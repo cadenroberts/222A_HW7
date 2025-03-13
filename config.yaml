@@ -74,7 +74,14 @@ MACROS:
     lef: dir::src/mem/sky130_sram_1kbyte_1rw1r_32x256_8.lef 
     lib: 
       "*": dir::src/mem/sky130_sram_1kbyte_1rw1r_32x256_8_TT_1p8V_25C.lib
-
+    instances:
+      mem_inst0:
+        orientation: N
+        location: [300, 800]
+      mem_inst1:
+        orientation: S
+        location: [950, 800]
+  
 STA_CORNERS: [nom_tt_025C_1v80, fast_ff_n40C_1v95, slow_ss_100C_1v60]
 PDN_MACRO_CONNECTIONS: ["mem_inst0 vccd1 vssd1 vccd1 vssd1", "mem_inst1 vccd1 vssd1 vccd1 vssd1"]
 VERILOG_POWER_DEFINE: USE_POWER_PINS
@@ -84,8 +91,8 @@ VDD_NETS: ["vccd1"]
 GND_NETS: ["vssd1"]
 
 # Placement configuration
-PL_MAX_DISPLACEMENT_X: 500
-PL_MAX_DISPLACEMENT_Y: 500
+PL_MAX_DISPLACEMENT_X: 1000
+PL_MAX_DISPLACEMENT_Y: 1000
 
 # Pin order configuration file
 FP_PIN_ORDER_CFG: dir::pin_order.cfg
