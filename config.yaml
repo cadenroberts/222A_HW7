@@ -91,8 +91,8 @@ VDD_NETS: ["vccd1"]
 GND_NETS: ["vssd1"]
 
 # Placement configuration
-PL_MAX_DISPLACEMENT_X: 1000
-PL_MAX_DISPLACEMENT_Y: 1000
+PL_MAX_DISPLACEMENT_X: 500
+PL_MAX_DISPLACEMENT_Y: 500
 
 # Pin order configuration file
 FP_PIN_ORDER_CFG: dir::pin_order.cfg
