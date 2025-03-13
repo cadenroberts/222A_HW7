@@ -41,21 +41,21 @@ VERILOG_FILES: [dir::src/ibex_alu.v,
 
 ERROR_ON_LINTER_ERRORS: false
 ERROR_ON_SYNTH_CHECKS: false
+
 MAGIC_WRITE_LEF_PINONLY: true
 CLOCK_PERIOD: 100
 CLOCK_PORT: clk_i
 FP_CORE_UTIL: 20
 
-# Must create base.sdc
+# Timing constraint files
 PNR_SDC_FILE: dir::base.sdc
-# Must create signoff.sdc
 SIGNOFF_SDC_FILE: dir::signoff.sdc
 
-# lef write configuration
+# LEF/GDS settings
 MAGIC_WRITE_LEF_PINONLY: true
 MAGIC_LEF_WRITE_USE_GDS: false
 
-# drc tool configuration
+# DRC Configuration
 RUN_MAGIC_DRC: false
 RUN_KLAYOUT_DRC: true
 RUN_MAGIC_STREAMOUT: false
@@ -63,52 +63,56 @@ RUN_KLAYOUT_STREAMOUT: true
 RUN_KLAYOUT_XOR: false
 PRIMARY_GDSII_STREAMOUT_TOOL: klayout
 
-
 MACROS: 
   sky130_sram_1kbyte_1rw1r_32x256_8:
     gds: dir::src/mem/sky130_sram_1kbyte_1rw1r_32x256_8.gds
     lef: dir::src/mem/sky130_sram_1kbyte_1rw1r_32x256_8.lef 
     lib: 
       "*": dir::src/mem/sky130_sram_1kbyte_1rw1r_32x256_8_TT_1p8V_25C.lib
-
     instances:
       mem_inst0:
         orientation: N
-        location: [300, 300] #dont know total die area yet, for first run leave out location, run until floor planning, look @ metrics to see size
-
+        location: [300,800]
       mem_inst1:
-        orientation: N 
-        location: [300,900] #estimate from .lib file: area : 190712.55 (should be close to square ~ 450x450), make 1640 for block so dont wanna palce outside of that 700+400= 1100 so we good
+        orientation: N
+        location: [950, 800]
 
 RUN_HEURISTIC_DIODE_INSERTION: true
 # RUN_POST_GRT_DESIGN_REPAIR: true
        
-GRT_ADJUSTMENT: 0.3  # helps avoid congestion during global routing
-GRT_RESIZER_SETUP_SLACK_MARGIN: 0.8
-GRT_RESIZER_HOLD_SLACK_MARGIN: 0.6
-GRT_RESIZER_HOLD_MAX_BUFFER_PCT: 100 #used to be 100
-GRT_RESIZER_SETUP_MAX_BUFFER_PCT: 100
-RUN_POST_GRT_RESIZER_TIMING: true
-DIODE_ON_PORTS: 'both'  # diodes are on both input and output ports
-GRT_ANTENNA_ITERS: 30 #50  
-GRT_ANTENNA_MARGIN: 75 
+#GRT_ADJUSTMENT: 0.3  helps avoid congestion during global routing
+#GRT_RESIZER_SETUP_SLACK_MARGIN: 0.8
+GRT_RESIZER_HOLD_SLACK_MARGIN: 0.8
+GRT_RESIZER_HOLD_MAX_BUFFER_PCT: 60 #used to be 100
+PL_RESIZER_HOLD_MAX_BUFFER_PCT: 45
+PL_RESIZER_HOLD_SLACK_MARGIN: 0.6
+#GRT_RESIZER_SETUP_MAX_BUFFER_PCT: 100
+#RUN_POST_GRT_RESIZER_TIMING: true
+#DIODE_ON_PORTS: 'both'  # diodes are on both input and output ports
+#GRT_ANTENNA_ITERS: 30 #50  
+#GRT_ANTENNA_MARGIN: 75 
 
-# This will only run one corner. Good for exploration, but not full sign-off!
-STA_CORNERS: [nom_tt_025C_1v80, fast_ff_n40C_1v95, slow_ss_100C_1v60]
+# Set process corners explicitly
+STA_CORNERS: ["nom_tt_025C_1v80", "nom_ff_n40C_1v95", "nom_ss_100C_1v60"]
+
+# Power grid macro connections
 PDN_MACRO_CONNECTIONS: ["mem_inst0 vccd1 vssd1 vccd1 vssd1", "mem_inst1 vccd1 vssd1 vccd1 vssd1"]
+
 VERILOG_POWER_DEFINE: USE_POWER_PINS
 ERROR_ON_PDN_VIOLATIONS: false
 
+# Power/Ground networks
 VDD_NETS: ["vccd1"]
 GND_NETS: ["vssd1"]
 
+# Placement constraints
 PL_MAX_DISPLACEMENT_X: 500
 PL_MAX_DISPLACEMENT_Y: 500
 
-# Must create pin_order.cfg
+# Pin ordering
 FP_PIN_ORDER_CFG: dir::pin_order.cfg
 
-# PDN
+# Power Delivery Network (PDN) settings
 FP_PDN_VOFFSET: 5
 FP_PDN_HOFFSET: 5
 FP_PDN_VWIDTH: 2
